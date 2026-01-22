@@ -1,5 +1,5 @@
-import { Project } from "../types";
-import { Calendar, Building2, MapPin, Tag, ExternalLink } from "lucide-react";
+import { type Project } from "../types";
+import { Calendar, Building2, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
 interface ProjectCardProps {
@@ -11,23 +11,42 @@ export default function ProjectCard({ project }: ProjectCardProps) {
     switch (status) {
       case "open":
         return (
-          <span className="px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">
+          <span className="px-2 py-0.5 rounded text-xs font-semibold bg-green-100 text-green-700">
             접수중
           </span>
         );
       case "upcoming":
         return (
-          <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
+          <span className="px-2 py-0.5 rounded text-xs font-semibold bg-blue-100 text-blue-700">
             접수예정
           </span>
         );
       case "closed":
         return (
-          <span className="px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-500">
+          <span className="px-2 py-0.5 rounded text-xs font-semibold bg-gray-100 text-gray-500">
             마감
           </span>
         );
     }
+  };
+
+  const getSupportTypeBadge = (type: string) => {
+    const colors: Record<string, string> = {
+      자금지원: "bg-blue-500",
+      기술지원: "bg-purple-500",
+      인력지원: "bg-orange-500",
+      수출지원: "bg-green-500",
+      창업지원: "bg-pink-500",
+    };
+    const bgColor = colors[type] || "bg-gray-500";
+
+    return (
+      <span
+        className={`px-2 py-0.5 rounded text-xs font-semibold text-white ${bgColor}`}
+      >
+        {type}
+      </span>
+    );
   };
 
   const formatDate = (dateString: string) => {
@@ -39,72 +58,64 @@ export default function ProjectCard({ project }: ProjectCardProps) {
     });
   };
 
+  const getStatusTypeLabel = () => {
+    return `${project.supportType}${project.status === "open" ? "접수중" : project.status === "upcoming" ? "접수예정" : "마감"}`;
+  };
+
   return (
-    <div className="group bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-blue-200 transition-all duration-300 overflow-hidden">
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200 overflow-hidden">
       <div className="p-6">
-        {/* Header */}
-        <div className="flex items-start justify-between gap-4 mb-4">
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-2">
-              {getStatusBadge(project.status)}
-              <span className="px-3 py-1 rounded-full text-xs font-medium bg-purple-50 text-purple-600">
-                {project.supportType}
-              </span>
-            </div>
-            <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2">
-              {project.title}
-            </h3>
-          </div>
+        {/* Badge */}
+        <div className="mb-4">
+          <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold text-white bg-purple-500">
+            {getStatusTypeLabel()}
+          </span>
         </div>
 
-        {/* Info */}
-        <div className="space-y-2 mb-4">
-          <div className="flex items-center gap-2 text-sm text-gray-600">
-            <Building2 className="w-4 h-4 text-gray-400" />
-            <span>{project.organization}</span>
-          </div>
-          <div className="flex items-center gap-2 text-sm text-gray-600">
-            <MapPin className="w-4 h-4 text-gray-400" />
-            <span>{project.region}</span>
-          </div>
-          <div className="flex items-center gap-2 text-sm text-gray-600">
+        {/* Title */}
+        <h3 className="text-lg font-bold text-gray-900 mb-3 leading-tight">
+          {project.title}
+        </h3>
+
+        {/* Organization */}
+        <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
+          <Building2 className="w-4 h-4 text-gray-400 flex-shrink-0" />
+          <span>{project.organization}</span>
+        </div>
+
+        {/* Description */}
+        <p className="text-sm text-gray-600 mb-4 leading-relaxed">
+          {project.region} 지역 {project.supportType} 지원사업
+        </p>
+
+        {/* Tags */}
+        <div className="flex flex-wrap gap-2 mb-4">
+          {project.tags.map((tag) => (
+            <span
+              key={tag}
+              className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium text-gray-600"
+            >
+              #{tag}
+            </span>
+          ))}
+        </div>
+
+        {/* Date & Link */}
+        <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+          <div className="flex items-center gap-2 text-sm text-gray-500">
             <Calendar className="w-4 h-4 text-gray-400" />
             <span>
               {formatDate(project.applicationStartDate)} ~{" "}
               {formatDate(project.applicationEndDate)}
             </span>
           </div>
-        </div>
-
-        {/* Tags */}
-        <div className="flex flex-wrap gap-2 mb-4">
-          {project.tags.slice(0, 3).map((tag) => (
-            <span
-              key={tag}
-              className="inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs bg-gray-50 text-gray-600"
-            >
-              <Tag className="w-3 h-3" />
-              {tag}
-            </span>
-          ))}
-        </div>
-
-        {/* Actions */}
-        <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
           <Link
             to={`/projects/${project.id}`}
-            className="flex-1 py-2.5 rounded-xl text-center font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 transition-colors"
+            className="inline-flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-semibold text-blue-600 hover:bg-blue-50 transition-colors"
           >
             상세보기
+            <ArrowRight className="w-4 h-4" />
           </Link>
-          <a
-            href={project.detailUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center w-10 h-10 rounded-xl bg-gray-50 text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors"
-          >
-            <ExternalLink className="w-4 h-4" />
-          </a>
         </div>
       </div>
     </div>

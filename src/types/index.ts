@@ -12,6 +12,7 @@ export interface UserProfile {
 // 정부지원사업(공고) 타입
 export interface Project {
   id: string;
+  description: string;
   title: string; // 제목
   organization: string; // 주관부처
   supportType: string; // 지원형태

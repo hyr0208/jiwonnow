@@ -1,6 +1,6 @@
 import { useState } from "react";
 import {
-  UserProfile,
+  type UserProfile,
   REGIONS,
   INDUSTRIES,
   BUSINESS_TYPES,
@@ -27,7 +27,7 @@ export default function ProfileForm({
   const [profile, setProfile] = useState<UserProfile>({
     region: initialData?.region || "",
     industry: initialData?.industry || "",
-    businessType: initialData?.businessType || "individual",
+    businessType: initialData?.businessType || ("pre-startup" as UserProfile["businessType"]),
     revenueRange: initialData?.revenueRange || "",
     foundedYear: initialData?.foundedYear || undefined,
     employeeCount: initialData?.employeeCount || undefined,
@@ -42,11 +42,13 @@ export default function ProfileForm({
   const years = Array.from({ length: 30 }, (_, i) => currentYear - i);
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-8">
       {/* Business Type */}
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-3">
-          <Building2 className="inline w-4 h-4 mr-2" />
+        <label className="block text-base font-bold text-gray-800 mb-4 flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
+            <Building2 className="w-4 h-4 text-blue-600" />
+          </div>
           사업자 형태
         </label>
         <div className="grid grid-cols-3 gap-3">
@@ -60,10 +62,10 @@ export default function ProfileForm({
                   businessType: type.value as UserProfile["businessType"],
                 })
               }
-              className={`py-3 px-4 rounded-xl font-medium transition-all ${
+              className={`py-4 px-4 rounded-2xl font-bold text-sm transition-all duration-300 ${
                 profile.businessType === type.value
-                  ? "gradient-primary text-white shadow-lg"
-                  : "bg-gray-50 text-gray-700 hover:bg-gray-100"
+                  ? "bg-blue-600 text-white shadow-lg border-2 border-blue-700"
+                  : "bg-white text-gray-700 hover:bg-gray-50 border-2 border-gray-200 hover:border-gray-300 shadow-sm"
               }`}
             >
               {type.label}
@@ -74,15 +76,17 @@ export default function ProfileForm({
 
       {/* Region */}
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
-          <MapPin className="inline w-4 h-4 mr-2" />
+        <label className="block text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center">
+            <MapPin className="w-4 h-4 text-purple-600" />
+          </div>
           지역 (시/도)
         </label>
         <div className="relative">
           <select
             value={profile.region}
             onChange={(e) => setProfile({ ...profile, region: e.target.value })}
-            className="w-full appearance-none pl-4 pr-10 py-3 rounded-xl border border-gray-200 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+            className="w-full appearance-none pl-4 pr-12 py-4 rounded-2xl border-2 border-gray-200 bg-gray-50 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 outline-none transition-all duration-300 font-medium text-gray-700"
             required
           >
             <option value="">지역을 선택하세요</option>
@@ -92,14 +96,16 @@ export default function ProfileForm({
               </option>
             ))}
           </select>
-          <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+          <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
         </div>
       </div>
 
       {/* Industry */}
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
-          <Building2 className="inline w-4 h-4 mr-2" />
+        <label className="block text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
+            <Building2 className="w-4 h-4 text-green-600" />
+          </div>
           업종
         </label>
         <div className="relative">
@@ -108,7 +114,7 @@ export default function ProfileForm({
             onChange={(e) =>
               setProfile({ ...profile, industry: e.target.value })
             }
-            className="w-full appearance-none pl-4 pr-10 py-3 rounded-xl border border-gray-200 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+            className="w-full appearance-none pl-4 pr-12 py-4 rounded-2xl border-2 border-gray-200 bg-gray-50 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 outline-none transition-all duration-300 font-medium text-gray-700"
             required
           >
             <option value="">업종을 선택하세요</option>
@@ -118,15 +124,17 @@ export default function ProfileForm({
               </option>
             ))}
           </select>
-          <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+          <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Founded Year */}
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            <Calendar className="inline w-4 h-4 mr-2" />
+          <label className="block text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center">
+              <Calendar className="w-4 h-4 text-orange-600" />
+            </div>
             설립연도
           </label>
           <div className="relative">
@@ -140,7 +148,7 @@ export default function ProfileForm({
                     : undefined,
                 })
               }
-              className="w-full appearance-none pl-4 pr-10 py-3 rounded-xl border border-gray-200 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+              className="w-full appearance-none pl-4 pr-12 py-4 rounded-2xl border-2 border-gray-200 bg-gray-50 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 outline-none transition-all duration-300 font-medium text-gray-700"
             >
               <option value="">선택 (선택사항)</option>
               {years.map((year) => (
@@ -149,14 +157,16 @@ export default function ProfileForm({
                 </option>
               ))}
             </select>
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+            <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
           </div>
         </div>
 
         {/* Employee Count */}
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            <Users className="inline w-4 h-4 mr-2" />
+          <label className="block text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-pink-100 flex items-center justify-center">
+              <Users className="w-4 h-4 text-pink-600" />
+            </div>
             직원 수
           </label>
           <input
@@ -172,15 +182,18 @@ export default function ProfileForm({
                   : undefined,
               })
             }
-            className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+            className="w-full px-4 py-4 rounded-2xl border-2 border-gray-200 bg-gray-50 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 outline-none transition-all duration-300 font-medium placeholder:text-gray-400"
           />
         </div>
       </div>
 
       {/* Revenue Range */}
       <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2">
-          <DollarSign className="inline w-4 h-4 mr-2" />연 매출 구간
+        <label className="block text-base font-bold text-gray-800 mb-3 flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-yellow-100 flex items-center justify-center">
+            <DollarSign className="w-4 h-4 text-yellow-600" />
+          </div>
+          연 매출 구간
         </label>
         <div className="relative">
           <select
@@ -188,7 +201,7 @@ export default function ProfileForm({
             onChange={(e) =>
               setProfile({ ...profile, revenueRange: e.target.value })
             }
-            className="w-full appearance-none pl-4 pr-10 py-3 rounded-xl border border-gray-200 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition-all"
+            className="w-full appearance-none pl-4 pr-12 py-4 rounded-2xl border-2 border-gray-200 bg-gray-50 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/10 outline-none transition-all duration-300 font-medium text-gray-700"
           >
             <option value="">선택 (선택사항)</option>
             {REVENUE_RANGES.filter((r) => r !== "선택안함").map((range) => (
@@ -197,16 +210,16 @@ export default function ProfileForm({
               </option>
             ))}
           </select>
-          <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+          <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
         </div>
       </div>
 
       {/* Submit Button */}
       <button
         type="submit"
-        className="w-full py-4 rounded-xl gradient-primary text-white font-bold text-lg shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5"
+        className="w-full py-5 rounded-2xl gradient-primary border font-black text-lg shadow-2xl hover:shadow-3xl transition-all duration-300 hover:-translate-y-1 transform hover:scale-[1.02]"
       >
-        맞춤 공고 추천받기
+        맞춤 공고 추천받기 ✨
       </button>
     </form>
   );
