@@ -15,7 +15,7 @@ export default function FilterBar({ filters, onFilterChange }: FilterBarProps) {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
             type="text"
-            placeholder="자격증 이름, 기관, 키워드로 검색..."
+            placeholder="사업명, 키워드로 검색..."
             value={filters.keyword || ""}
             onChange={(e) =>
               onFilterChange({ ...filters, keyword: e.target.value })
