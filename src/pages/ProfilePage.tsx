@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { UserProfile } from "../types";
+import { type UserProfile } from "../types";
 import ProfileForm from "../components/ProfileForm";
 import { User, Sparkles } from "lucide-react";
 
@@ -34,32 +34,34 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen pt-24 pb-32 md:pb-10 px-4">
+    <div className="min-h-screen py-8 px-6 lg:px-12 bg-white">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="text-center mb-10">
           <div className="w-16 h-16 rounded-2xl gradient-primary flex items-center justify-center mx-auto mb-4 shadow-lg">
             <User className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl md:text-4xl font-black text-gray-900 mb-3">
             내 프로필 입력
           </h1>
-          <p className="text-gray-600">
+          <p className="text-base text-gray-600">
             사업자 정보를 입력하면 맞춤 정부지원사업을 추천해 드려요
           </p>
         </div>
 
         {/* Form Card */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6 md:p-8">
           <ProfileForm onSubmit={handleSubmit} />
         </div>
 
         {/* Info */}
-        <p className="text-center text-sm text-gray-500 mt-6">
-          입력하신 정보는 맞춤 추천을 위해서만 사용되며,
-          <br />
-          외부에 공유되지 않습니다.
-        </p>
+        <div className="text-center mt-6 p-4 rounded-xl bg-blue-50 border border-blue-100">
+          <p className="text-sm text-gray-600">
+            <span className="font-bold text-blue-600">🔒 보안 보장</span>
+            <br />
+            입력하신 정보는 맞춤 추천을 위해서만 사용되며, 외부에 공유되지 않습니다.
+          </p>
+        </div>
       </div>
     </div>
   );

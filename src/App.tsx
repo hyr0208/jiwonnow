@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Header from "./components/Header";
+import Sidebar from "./components/Sidebar";
+import MobileHeader from "./components/MobileHeader";
 import HomePage from "./pages/HomePage";
 import ProjectsPage from "./pages/ProjectsPage";
 import ProjectDetailPage from "./pages/ProjectDetailPage";
@@ -10,8 +11,9 @@ function App() {
   return (
     <Router>
       <div className="min-h-screen bg-gray-50">
-        <Header />
-        <main>
+        <Sidebar />
+        <MobileHeader />
+        <main className="lg:ml-60 pt-14 lg:pt-0 min-h-screen">
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/projects" element={<ProjectsPage />} />
