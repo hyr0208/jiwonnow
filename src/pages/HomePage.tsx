@@ -40,13 +40,23 @@ export default function HomePage() {
       }
 
       // 지역 필터
-      if (
-        filters.region &&
-        filters.region !== "전체" &&
-        project.region !== filters.region &&
-        project.region !== "전국"
-      ) {
-        return false;
+      if (filters.region && filters.region !== "전체") {
+        // 전국은 모든 지역에 해당
+        if (project.region === "전국") {
+          // 전국은 통과
+        } else {
+          // 정확히 일치하거나 포함되어야 함
+          const projectRegion = project.region?.toLowerCase() || "";
+          const filterRegion = filters.region.toLowerCase();
+
+          if (
+            projectRegion !== filterRegion &&
+            !projectRegion.includes(filterRegion) &&
+            !filterRegion.includes(projectRegion)
+          ) {
+            return false;
+          }
+        }
       }
 
       // 상태 필터

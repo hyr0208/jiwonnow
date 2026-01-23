@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { type Project } from "../types";
 import { Calendar, Building2, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -5,15 +6,16 @@ import { Link } from "react-router-dom";
 interface ProjectCardProps {
   project: Project;
 }
-
 export default function ProjectCard({ project }: ProjectCardProps) {
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("ko-KR", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
+    if (!dateString) return "미정";
+
+    // dayjs로 파싱 시도 (다양한 형식 자동 처리)
+    const date = dayjs(dateString);
+
+    if (!date.isValid()) return dateString;
+
+    return date.format("YYYY년 M월 D일");
   };
 
   const getStatusTypeLabel = () => {

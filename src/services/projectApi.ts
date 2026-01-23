@@ -35,11 +35,67 @@ interface BizinfoResponse {
   };
 }
 
+// 알려진 지역 목록
+const KNOWN_REGIONS = [
+  "서울",
+  "부산",
+  "대구",
+  "인천",
+  "광주",
+  "대전",
+  "울산",
+  "세종",
+  "경기",
+  "강원",
+  "충북",
+  "충남",
+  "전북",
+  "전남",
+  "경북",
+  "경남",
+  "제주",
+  "서울특별시",
+  "부산광역시",
+  "대구광역시",
+  "인천광역시",
+  "광주광역시",
+  "대전광역시",
+  "울산광역시",
+  "세종특별자치시",
+  "경기도",
+  "강원도",
+  "충청북도",
+  "충청남도",
+  "전라북도",
+  "전라남도",
+  "경상북도",
+  "경상남도",
+  "제주특별자치도",
+];
+
+// jrsdInsttNm이 지역인지 확인
+const isRegion = (value: string | undefined): boolean => {
+  if (!value) return false;
+  return KNOWN_REGIONS.some((region) => value.includes(region));
+};
+
 // API 응답을 Project 타입으로 변환
 const transformToProject = (item: BizinfoItem, index: number): Project => {
   // 필드 우선순위로 값 추출
   const title = item.pblancNm || item.bizSbjtName || "제목 없음";
-  const organization = item.jrsdInsttNm || item.rprsInsttNm || "미정";
+
+  // jrsdInsttNm이 지역명인 경우만 지역으로 사용
+  let region = "전국";
+  let organization = "미정";
+
+  if (isRegion(item.jrsdInsttNm)) {
+    region = item.jrsdInsttNm!;
+    organization = item.rprsInsttNm || "미정";
+  } else {
+    region = item.areaNm || "전국";
+    organization = item.jrsdInsttNm || item.rprsInsttNm || "미정";
+  }
+
   const description = item.bsnsSumryCn || item.bizSbjtOutln || "";
   const detailUrl =
     item.pblancUrl || item.detailPageUrl || "https://www.bizinfo.go.kr";
@@ -88,7 +144,7 @@ const transformToProject = (item: BizinfoItem, index: number): Project => {
     supportType,
     applicationStartDate: startDate,
     applicationEndDate: endDate,
-    region: item.areaNm || "전국",
+    region,
     targetAudience: "중소기업, 소상공인",
     supportContent: description,
     applicationMethod: "온라인 신청",
