@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { collection, query, getDocs, orderBy } from "firebase/firestore";
 import { db } from "../services/firebase";
@@ -13,7 +13,6 @@ interface BookmarkedProject extends Project {
 
 export default function BookmarksPage() {
   const { user, loading, login } = useAuth();
-  const navigate = useNavigate();
   const [bookmarks, setBookmarks] = useState<BookmarkedProject[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(true);
 

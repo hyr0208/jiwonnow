@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
 import { type UserProfile, type Project } from "../types";
 import ProfileForm from "../components/ProfileForm";
 import ProjectCard from "../components/ProjectCard";
@@ -9,7 +8,6 @@ import { getUserProfile, updateUserProfile } from "../services/userService";
 import { useProjects } from "../hooks/useProjects";
 
 export default function ProfilePage() {
-  const navigate = useNavigate();
   const { user, login, loading: authLoading } = useAuth();
   const { data: projects } = useProjects({ pageSize: 100 });
 

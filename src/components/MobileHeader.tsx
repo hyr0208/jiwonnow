@@ -1,14 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import {
-  Home,
-  FileText,
-  Bookmark,
-  User,
-  Menu,
-  X,
-  LogIn,
-  LogOut,
-} from "lucide-react";
+import { Home, Bookmark, Menu, X, LogIn, LogOut } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 
