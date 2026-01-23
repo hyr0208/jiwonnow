@@ -4,15 +4,7 @@ import {
   useNavigate,
   useSearchParams,
 } from "react-router-dom";
-import {
-  Home,
-  FileText,
-  Bookmark,
-  User,
-  Search,
-  MessageCircle,
-  LogIn,
-} from "lucide-react";
+import { Home, FileText, Bookmark, User, Search, LogIn } from "lucide-react";
 import { SUPPORT_TYPES } from "../types";
 
 export default function Sidebar() {

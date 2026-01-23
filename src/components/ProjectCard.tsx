@@ -7,48 +7,6 @@ interface ProjectCardProps {
 }
 
 export default function ProjectCard({ project }: ProjectCardProps) {
-  const getStatusBadge = (status: Project["status"]) => {
-    switch (status) {
-      case "open":
-        return (
-          <span className="px-2 py-0.5 rounded text-xs font-semibold bg-green-100 text-green-700">
-            접수중
-          </span>
-        );
-      case "upcoming":
-        return (
-          <span className="px-2 py-0.5 rounded text-xs font-semibold bg-blue-100 text-blue-700">
-            접수예정
-          </span>
-        );
-      case "closed":
-        return (
-          <span className="px-2 py-0.5 rounded text-xs font-semibold bg-gray-100 text-gray-500">
-            마감
-          </span>
-        );
-    }
-  };
-
-  const getSupportTypeBadge = (type: string) => {
-    const colors: Record<string, string> = {
-      자금지원: "bg-blue-500",
-      기술지원: "bg-purple-500",
-      인력지원: "bg-orange-500",
-      수출지원: "bg-green-500",
-      창업지원: "bg-pink-500",
-    };
-    const bgColor = colors[type] || "bg-gray-500";
-
-    return (
-      <span
-        className={`px-2 py-0.5 rounded text-xs font-semibold text-white ${bgColor}`}
-      >
-        {type}
-      </span>
-    );
-  };
-
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("ko-KR", {
