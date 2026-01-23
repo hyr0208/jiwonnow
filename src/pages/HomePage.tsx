@@ -1,7 +1,7 @@
-import { useMemo } from "react";
-import { Link, useSearchParams } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
-import { mockProjects } from "../data/mockProjects";
+import { useSearchParams } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { ArrowRight, Loader2, AlertCircle } from "lucide-react";
+import { useProjects, useFilteredProjects } from "../hooks/useProjects";
 import ProjectCard from "../components/ProjectCard";
 
 export default function HomePage() {
@@ -9,29 +9,49 @@ export default function HomePage() {
   const searchKeyword = searchParams.get("keyword") || "";
   const selectedCategory = searchParams.get("category") || "전체";
 
-  const filteredProjects = useMemo(() => {
-    let filtered = mockProjects;
+  // API에서 데이터 가져오기
+  const { data: projects, isLoading, error } = useProjects();
 
-    // Category filter
-    if (selectedCategory !== "전체") {
-      filtered = filtered.filter((p) => p.supportType === selectedCategory);
-    }
-
-    // Search filter
-    if (searchKeyword) {
-      const keyword = searchKeyword.toLowerCase();
-      filtered = filtered.filter(
-        (p) =>
-          p.title.toLowerCase().includes(keyword) ||
-          p.organization.toLowerCase().includes(keyword) ||
-          p.tags.some((tag) => tag.toLowerCase().includes(keyword))
-      );
-    }
-
-    return filtered;
-  }, [searchKeyword, selectedCategory]);
+  // 필터링
+  const filteredProjects = useFilteredProjects(projects, {
+    keyword: searchKeyword,
+    category: selectedCategory,
+  });
 
   const openProjects = filteredProjects.filter((p) => p.status === "open");
+
+  // 로딩 상태
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-10 h-10 text-blue-500 animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">지원사업 정보를 불러오는 중...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // 에러 상태
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto px-4">
+          <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+          <h2 className="text-xl font-bold text-gray-900 mb-2">
+            데이터를 불러올 수 없습니다
+          </h2>
+          <p className="text-gray-600 mb-4">잠시 후 다시 시도해주세요.</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors"
+          >
+            새로고침
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
