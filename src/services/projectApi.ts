@@ -20,8 +20,10 @@ interface BizinfoItem {
   rceptEngnHmpgUrl?: string; // 접수기관 홈페이지 URL
   hashtags?: string; // 해시태그
   areaNm?: string; // 지역명
-  bsnsMclasNm?: string; // 사업분류명
-  sportScopClassNm?: string; // 지원분야 (대체 필드)
+  pldirSportRealmLclasCodeNm?: string; // 정책지원분야 대분류 (ex: 기술)
+  pldirSportRealmMlsfcCodeNm?: string; // 정책지원분야 중분류
+  bsnsMclasNm?: string; // 사업분류명 (레거시)
+  sportScopClassNm?: string; // 지원분야 (레거시)
   totCnt?: string; // 총 건수
 }
 
@@ -145,8 +147,23 @@ const transformToProject = (item: BizinfoItem, index: number): Project => {
         .filter(Boolean)
     : [];
 
-  // 지원형태 추출
-  const supportType = item.sportScopClassNm || item.bsnsMclasNm || "기타";
+  // 지원형태 추출 (필드명 우선순위 조정)
+  let supportType =
+    item.pldirSportRealmLclasCodeNm ||
+    item.pldirSportRealmMlsfcCodeNm ||
+    item.sportScopClassNm ||
+    item.bsnsMclasNm ||
+    "기타";
+
+  // 분류명 정규화 (예: '기술' -> '기술지원')
+  if (supportType === "기술") supportType = "기술지원";
+  if (supportType === "자금") supportType = "자금지원";
+  if (supportType === "인력") supportType = "인력지원";
+  if (supportType === "수출") supportType = "수출지원";
+  if (supportType === "내수") supportType = "내수판로지원";
+  if (supportType === "내수판로") supportType = "내수판로지원";
+  if (supportType === "창업") supportType = "창업지원";
+  if (supportType === "경영") supportType = "경영지원";
 
   return {
     id: item.pblancId || String(index + 1),
