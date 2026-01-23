@@ -127,16 +127,41 @@ const transformToProject = (item: BizinfoItem, index: number): Project => {
     endDate = item.pbancRcptEndDt || "";
   }
 
-  // 상태 결정
+  // 날짜 문자열을 Date 객체로 변환하는 헬퍼 함수
+  const parseDate = (dateStr: string): Date | null => {
+    if (!dateStr) return null;
+
+    // YYYYMMDD 형식 (예: 20260121)
+    if (/^\d{8}$/.test(dateStr)) {
+      const year = dateStr.slice(0, 4);
+      const month = dateStr.slice(4, 6);
+      const day = dateStr.slice(6, 8);
+      return new Date(`${year}-${month}-${day}`);
+    }
+
+    // YYYY-MM-DD 또는 YYYY.MM.DD 형식
+    if (/^\d{4}[-./]\d{2}[-./]\d{2}$/.test(dateStr)) {
+      return new Date(dateStr.replace(/[./]/g, "-"));
+    }
+
+    // 그 외 형식은 Date 생성자에 맡김
+    const parsed = new Date(dateStr);
+    return isNaN(parsed.getTime()) ? null : parsed;
+  };
+
+  // 상태 결정 (오늘 날짜 기준)
   const now = new Date();
-  const start = startDate ? new Date(startDate) : null;
-  const end = endDate ? new Date(endDate) : null;
+  now.setHours(0, 0, 0, 0); // 시간 제거하여 날짜만 비교
+
+  const start = parseDate(startDate);
+  const end = parseDate(endDate);
+  if (end) end.setHours(23, 59, 59, 999); // 마감일은 당일 끝까지 포함
 
   let status: Project["status"] = "open";
   if (start && now < start) {
-    status = "upcoming";
+    status = "upcoming"; // 접수예정
   } else if (end && now > end) {
-    status = "closed";
+    status = "closed"; // 마감
   }
 
   // 해시태그를 배열로 변환
