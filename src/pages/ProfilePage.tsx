@@ -44,7 +44,7 @@ export default function ProfilePage() {
   useEffect(() => {
     if (showRecommendations && profile && projects) {
       // 1. 지역 매칭 (필수)
-      // 2. (추후) 업종/태그 매칭
+      // 2. 업종 매칭 (선택)
       const recommended = projects.filter((project) => {
         // 지역 필터: '전체' 또는 사용자 지역과 일치
         const regionMatch =
@@ -52,7 +52,97 @@ export default function ProfilePage() {
           project.region.includes(profile.region) ||
           profile.region.includes(project.region);
 
-        return regionMatch;
+        if (!regionMatch) return false;
+
+        // 업종 필터: 선택한 업종과 관련성 체크
+        if (profile.industry && profile.industry !== "전체") {
+          const content = `${project.title} ${project.tags.join(" ")} ${project.description} ${project.targetAudience} ${project.supportContent}`;
+
+          // 1. 공통 키워드 체크 (변별력을 위해 제외 - 업종 연관성 집중)
+          // const commonKeywords = ["중소기업", "소상공인", "전체", "공통", "모든", "스타트업"];
+          // if (commonKeywords.some((k) => content.includes(k))) return true;
+
+          // 2. 업종별 키워드 확장 매핑
+          let keywords = [profile.industry.replace("업", "")]; // 기본 키워드 (예: 제조, 건설)
+
+          switch (profile.industry) {
+            case "정보통신업":
+              keywords.push(
+                "IT",
+                "SW",
+                "소프트웨어",
+                "ICT",
+                "플랫폼",
+                "앱",
+                "데이터",
+                "인공지능",
+                "AI",
+                "디지털",
+              );
+              break;
+            case "도소매업":
+              keywords.push(
+                "도매",
+                "소매",
+                "유통",
+                "물류",
+                "무역",
+                "상점",
+                "마켓",
+                "커머스",
+                "스토어",
+              );
+              break;
+            case "음식숙박업":
+              keywords.push(
+                "음식",
+                "식당",
+                "숙박",
+                "외식",
+                "푸드",
+                "관광",
+                "여행",
+                "호텔",
+              );
+              break;
+            case "전문과학기술서비스업":
+              keywords.push(
+                "연구",
+                "R&D",
+                "과학",
+                "기술",
+                "특허",
+                "지식재산",
+                "컨설팅",
+              );
+              break;
+            case "예술스포츠여가업":
+              keywords.push(
+                "예술",
+                "스포츠",
+                "콘텐츠",
+                "문화",
+                "체육",
+                "공연",
+                "전시",
+              );
+              break;
+            case "보건사회복지업":
+              keywords.push("보건", "의료", "복지", "돌봄", "헬스케어", "실버");
+              break;
+            case "교육서비스업":
+              keywords.push("교육", "학원", "에듀테크", "강의", "훈련");
+              break;
+            case "건설업":
+              keywords.push("건축", "토목", "시공", "인테리어");
+              break;
+          }
+
+          // 업종 키워드 중 하나라도 포함되면 추천
+          return keywords.some((k) => content.includes(k));
+        }
+
+        return true;
       });
       setRecommendedProjects(recommended);
     }
@@ -62,17 +152,21 @@ export default function ProfilePage() {
     if (!user) return;
 
     setIsSaving(true);
+    setRecommendedProjects([]); // 결과 초기화 (깜빡임 효과 및 재계산 시각화)
+    setShowRecommendations(false); // 잠시 숨김
+
     try {
       await updateUserProfile(user.uid, newProfile);
       setProfile(newProfile);
-      setShowRecommendations(true);
-      // 스크롤을 아래로 이동
+      // 약간의 지연 후 결과 표시 (사용자가 "분석 중"임을 느끼도록)
       setTimeout(() => {
+        setShowRecommendations(true);
+        // 스크롤 이동
         window.scrollTo({
           top: document.body.scrollHeight,
           behavior: "smooth",
         });
-      }, 100);
+      }, 800);
     } catch (error) {
       console.error("Failed to save profile", error);
       alert("프로필 저장에 실패했습니다.");
