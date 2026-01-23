@@ -1,5 +1,8 @@
+import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { useProjects } from "../hooks/useProjects";
+import { useProjects } from "../hooks/useProjects"; // useProjects 훅 사용
+import { useAuth } from "../contexts/AuthContext";
+import { toggleBookmark, checkIsBookmarked } from "../services/bookmarkService";
 import dayjs from "dayjs";
 import "dayjs/locale/ko";
 import {
@@ -21,12 +24,56 @@ dayjs.locale("ko");
 export default function ProjectDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user, login } = useAuth(); // AuthContext 사용
 
   // API에서 프로젝트 목록 가져오기
   const { data: projects, isLoading, error } = useProjects({ pageSize: 100 });
 
   // ID로 프로젝트 찾기
   const project = projects?.find((p) => p.id === id);
+
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [isBookmarkLoading, setIsBookmarkLoading] = useState(false);
+
+  // 즐겨찾기 상태 확인
+  useEffect(() => {
+    const checkStatus = async () => {
+      if (user && id) {
+        const status = await checkIsBookmarked(user.uid, id);
+        setIsBookmarked(status);
+      } else {
+        setIsBookmarked(false);
+      }
+    };
+    checkStatus();
+  }, [user, id]);
+
+  const handleBookmark = async () => {
+    if (!user) {
+      // 로그인 안 되어 있으면 로그인 유도
+      if (confirm("로그인이 필요한 서비스입니다. 로그인 하시겠습니까?")) {
+        try {
+          await login();
+        } catch (e) {
+          console.error(e);
+        }
+      }
+      return;
+    }
+
+    if (!project || isBookmarkLoading) return;
+
+    setIsBookmarkLoading(true);
+    try {
+      const newStatus = await toggleBookmark(user.uid, project);
+      setIsBookmarked(newStatus);
+    } catch (error) {
+      console.error("즐겨찾기 처리 실패:", error);
+      alert("즐겨찾기 처리에 실패했습니다.");
+    } finally {
+      setIsBookmarkLoading(false);
+    }
+  };
 
   // 로딩 상태
   if (isLoading) {
@@ -238,9 +285,23 @@ export default function ProjectDetailPage() {
                 <ExternalLink className="w-5 h-5" />
                 공식 사이트에서 신청하기
               </a>
-              <button className="sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-5 rounded-2xl border-2 border-gray-200 bg-white text-gray-700 font-bold hover:bg-gray-50 hover:border-gray-300 transition-all duration-300 shadow-sm hover:shadow-md">
-                <Bookmark className="w-5 h-5" />
-                저장
+              <button
+                onClick={handleBookmark}
+                disabled={isBookmarkLoading}
+                className={`sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-5 rounded-2xl border-2 font-bold transition-all duration-300 shadow-sm hover:shadow-md ${
+                  isBookmarked
+                    ? "bg-blue-500 border-blue-500 text-white hover:bg-blue-600 hover:border-blue-600"
+                    : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300"
+                } ${isBookmarkLoading ? "opacity-70 cursor-wait" : ""}`}
+              >
+                {isBookmarkLoading ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <Bookmark
+                    className={`w-5 h-5 ${isBookmarked ? "fill-current" : ""}`}
+                  />
+                )}
+                {isBookmarked ? "저장됨" : "저장"}
               </button>
               <button className="sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-5 rounded-2xl border-2 border-gray-200 bg-white text-gray-700 font-bold hover:bg-gray-50 hover:border-gray-300 transition-all duration-300 shadow-sm hover:shadow-md">
                 <Share2 className="w-5 h-5" />

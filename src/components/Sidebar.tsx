@@ -4,15 +4,36 @@ import {
   useNavigate,
   useSearchParams,
 } from "react-router-dom";
-import { Home, Bookmark, User, Search, LogIn } from "lucide-react";
+import { Home, Bookmark, User, Search, LogIn, LogOut } from "lucide-react";
 import { SUPPORT_TYPES } from "../types";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function Sidebar() {
+  const { user, login, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const searchKeyword = searchParams.get("keyword") || "";
   const selectedCategory = searchParams.get("category") || "전체";
+
+  const handleLogin = async () => {
+    try {
+      await login();
+      console.log("Logged in!");
+    } catch (error) {
+      console.error("Failed to login", error);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate("/");
+      console.log("Logged out!");
+    } catch (error) {
+      console.error("Failed to logout", error);
+    }
+  };
 
   const handleSearchChange = (value: string) => {
     const params = new URLSearchParams(searchParams);
@@ -116,15 +137,45 @@ export default function Sidebar() {
         })}
       </nav>
 
-      {/* Login Button */}
+      {/* User Section */}
       <div className="p-4 border-t border-gray-200">
-        <Link
-          to="/login"
-          className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors border border-gray-200 hover:border-gray-300"
-        >
-          <LogIn className="w-5 h-5 text-gray-500" />
-          <span>로그인</span>
-        </Link>
+        {user ? (
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center gap-3 px-2">
+              <img
+                src={
+                  user.photoURL ||
+                  `https://ui-avatars.com/api/?name=${user.displayName}`
+                }
+                alt={user.displayName || "User"}
+                className="w-8 h-8 rounded-full border border-gray-200"
+              />
+              <div className="flex flex-col overflow-hidden">
+                <span className="text-sm font-semibold text-gray-900 truncate">
+                  {user.displayName}
+                </span>
+                <span className="text-xs text-gray-500 truncate">
+                  {user.email}
+                </span>
+              </div>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-red-500 transition-colors"
+            >
+              <LogOut className="w-5 h-5" />
+              <span>로그아웃</span>
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={handleLogin}
+            className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors border border-gray-200 hover:border-gray-300"
+          >
+            <LogIn className="w-5 h-5 text-gray-500" />
+            <span>로그인</span>
+          </button>
+        )}
       </div>
     </aside>
   );

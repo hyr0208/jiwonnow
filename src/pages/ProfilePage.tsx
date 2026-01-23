@@ -39,7 +39,7 @@ export default function ProfilePage() {
         {/* Header */}
         <div className="text-center mb-10">
           <div className="w-16 h-16 rounded-2xl gradient-primary flex items-center justify-center mx-auto mb-4 shadow-lg">
-            <User className="w-8 h-8 text-white" />
+            <User className="w-8 h-8 " />
           </div>
           <h1 className="text-3xl md:text-4xl font-black text-gray-900 mb-3">
             내 프로필 입력
@@ -59,7 +59,8 @@ export default function ProfilePage() {
           <p className="text-sm text-gray-600">
             <span className="font-bold text-blue-600">🔒 보안 보장</span>
             <br />
-            입력하신 정보는 맞춤 추천을 위해서만 사용되며, 외부에 공유되지 않습니다.
+            입력하신 정보는 맞춤 추천을 위해서만 사용되며, 외부에 공유되지
+            않습니다.
           </p>
         </div>
       </div>

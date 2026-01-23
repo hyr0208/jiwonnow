@@ -50,10 +50,10 @@ export default function ProjectCard({ project }: ProjectCardProps) {
 
         {/* Tags */}
         <div className="flex flex-wrap gap-2 mb-4">
-          {project.tags.map((tag) => (
+          {(project.tags || []).slice(0, 3).map((tag) => (
             <span
               key={tag}
-              className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium text-gray-600"
+              className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600"
             >
               #{tag}
             </span>
@@ -61,7 +61,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
         </div>
 
         {/* Date & Link */}
-        <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+        <div className="flex flex-col gap-3 pt-4 border-t border-gray-100">
           <div className="flex items-center gap-2 text-sm text-gray-500">
             <Calendar className="w-4 h-4 text-gray-400" />
             <span>
@@ -71,7 +71,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
           </div>
           <Link
             to={`/projects/${project.id}`}
-            className="inline-flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-semibold text-blue-600 hover:bg-blue-50 transition-colors"
+            className="self-end inline-flex items-center gap-1 px-4 py-2.5 rounded-lg text-sm font-semibold text-blue-600 hover:bg-blue-50 transition-colors"
           >
             상세보기
             <ArrowRight className="w-4 h-4" />
