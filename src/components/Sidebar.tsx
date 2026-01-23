@@ -4,7 +4,7 @@ import {
   useNavigate,
   useSearchParams,
 } from "react-router-dom";
-import { Home, FileText, Bookmark, User, Search, LogIn } from "lucide-react";
+import { Home, Bookmark, User, Search, LogIn } from "lucide-react";
 import { SUPPORT_TYPES } from "../types";
 
 export default function Sidebar() {
@@ -36,7 +36,6 @@ export default function Sidebar() {
 
   const navItems = [
     { path: "/", label: "홈", icon: Home },
-    { path: "/projects", label: "공고", icon: FileText },
     { path: "/bookmarks", label: "즐겨찾기", icon: Bookmark },
     { path: "/profile", label: "내 프로필", icon: User },
   ];

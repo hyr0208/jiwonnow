@@ -3,21 +3,31 @@ import type { Project } from "../types";
 
 const API_KEY = import.meta.env.VITE_API_KEY;
 
-// 기업마당 API 응답 타입
+// 기업마당 API 응답 타입 (실제 응답 구조에 맞게 수정)
 interface BizinfoItem {
   pblancId: string; // 공고ID
-  pblancNm: string; // 공고명
-  jrsdInsttNm: string; // 소관기관명
-  bsnsSumryCn: string; // 사업요약내용
-  reqstBeginEndDe: string; // 신청기간
-  pblancUrl: string; // 상세URL
-  hashtags: string; // 해시태그
+  pblancNm?: string; // 공고명
+  bizSbjtName?: string; // 사업명 (대체 필드)
+  jrsdInsttNm?: string; // 소관기관명
+  rprsInsttNm?: string; // 대표기관명 (대체 필드)
+  bsnsSumryCn?: string; // 사업요약내용
+  bizSbjtOutln?: string; // 사업개요 (대체 필드)
+  reqstBeginEndDe?: string; // 신청기간
+  pbancRcptBgngDt?: string; // 접수시작일
+  pbancRcptEndDt?: string; // 접수종료일
+  pblancUrl?: string; // 상세URL
+  detailPageUrl?: string; // 상세페이지URL (대체 필드)
+  hashtags?: string; // 해시태그
   areaNm?: string; // 지역명
   bsnsMclasNm?: string; // 사업분류명
+  sportScopClassNm?: string; // 지원분야 (대체 필드)
+  totCnt?: string; // 총 건수
 }
 
 interface BizinfoResponse {
+  jsonArray?: BizinfoItem[];
   jsonList?: BizinfoItem[];
+  totalCnt?: string;
   rss?: {
     channel?: {
       item?: BizinfoItem[];
@@ -27,10 +37,25 @@ interface BizinfoResponse {
 
 // API 응답을 Project 타입으로 변환
 const transformToProject = (item: BizinfoItem, index: number): Project => {
-  // 신청기간 파싱 (예: "2026-01-15 ~ 2026-02-28")
-  const [startDate, endDate] = (item.reqstBeginEndDe || "")
-    .split("~")
-    .map((d) => d.trim());
+  // 필드 우선순위로 값 추출
+  const title = item.pblancNm || item.bizSbjtName || "제목 없음";
+  const organization = item.jrsdInsttNm || item.rprsInsttNm || "미정";
+  const description = item.bsnsSumryCn || item.bizSbjtOutln || "";
+  const detailUrl =
+    item.pblancUrl || item.detailPageUrl || "https://www.bizinfo.go.kr";
+
+  // 신청기간 파싱
+  let startDate = "";
+  let endDate = "";
+
+  if (item.reqstBeginEndDe) {
+    const [s, e] = item.reqstBeginEndDe.split("~").map((d) => d.trim());
+    startDate = s || "";
+    endDate = e || "";
+  } else {
+    startDate = item.pbancRcptBgngDt || "";
+    endDate = item.pbancRcptEndDt || "";
+  }
 
   // 상태 결정
   const now = new Date();
@@ -52,33 +77,22 @@ const transformToProject = (item: BizinfoItem, index: number): Project => {
         .filter(Boolean)
     : [];
 
-  // 지원형태 추출 (해시태그에서)
-  const supportTypes = [
-    "자금지원",
-    "기술지원",
-    "인력지원",
-    "수출지원",
-    "창업지원",
-    "경영지원",
-  ];
-  const supportType =
-    tags.find((tag) => supportTypes.includes(tag)) ||
-    item.bsnsMclasNm ||
-    "기타";
+  // 지원형태 추출
+  const supportType = item.sportScopClassNm || item.bsnsMclasNm || "기타";
 
   return {
     id: item.pblancId || String(index + 1),
-    title: item.pblancNm || "제목 없음",
-    description: item.bsnsSumryCn || "",
-    organization: item.jrsdInsttNm || "미정",
+    title,
+    description,
+    organization,
     supportType,
-    applicationStartDate: startDate || "",
-    applicationEndDate: endDate || "",
+    applicationStartDate: startDate,
+    applicationEndDate: endDate,
     region: item.areaNm || "전국",
     targetAudience: "중소기업, 소상공인",
-    supportContent: item.bsnsSumryCn || "",
+    supportContent: description,
     applicationMethod: "온라인 신청",
-    detailUrl: item.pblancUrl || "https://www.bizinfo.go.kr",
+    detailUrl,
     status,
     tags,
     createdAt: new Date().toISOString().split("T")[0],
@@ -98,15 +112,22 @@ export const fetchProjects = async (params?: {
       params: {
         crtfcKey: API_KEY,
         dataType: "json",
-        searchCnt: params?.searchCnt || 100,
+        pageUnit: params?.searchCnt || 100,
         pageIndex: params?.pageIndex || 1,
         searchLclasId: params?.searchLclasId,
         hashtags: params?.hashtags,
       },
     });
 
+    console.log("API Response:", response.data);
+
+    // 응답에서 데이터 추출 (여러 형식 지원)
     const items =
-      response.data.jsonList || response.data.rss?.channel?.item || [];
+      response.data.jsonArray ||
+      response.data.jsonList ||
+      response.data.rss?.channel?.item ||
+      [];
+
     return items.map((item, index) => transformToProject(item, index));
   } catch (error) {
     console.error("API 호출 실패:", error);
