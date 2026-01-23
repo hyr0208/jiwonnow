@@ -1,4 +1,9 @@
-import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import {
+  Link,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import {
   Home,
   FileText,
@@ -51,9 +56,11 @@ export default function Sidebar() {
       {/* Logo */}
       <div className="p-6 border-b border-gray-200">
         <Link to="/" className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg gradient-primary flex items-center justify-center shadow-md">
-            <span className="text-white font-bold text-lg">지</span>
-          </div>
+          <img
+            src="/logo.png"
+            alt="지원나우 로고"
+            className="w-10 h-10 rounded-lg shadow-md"
+          />
           <div className="flex flex-col">
             <span className="text-xl font-bold text-gray-900">지원나우</span>
             <span className="text-xs text-gray-500">정부지원사업 추천</span>
