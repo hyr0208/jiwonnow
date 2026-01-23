@@ -17,6 +17,7 @@ interface BizinfoItem {
   pbancRcptEndDt?: string; // 접수종료일
   pblancUrl?: string; // 상세URL
   detailPageUrl?: string; // 상세페이지URL (대체 필드)
+  rceptEngnHmpgUrl?: string; // 접수기관 홈페이지 URL
   hashtags?: string; // 해시태그
   areaNm?: string; // 지역명
   bsnsMclasNm?: string; // 사업분류명
@@ -97,8 +98,19 @@ const transformToProject = (item: BizinfoItem, index: number): Project => {
   }
 
   const description = item.bsnsSumryCn || item.bizSbjtOutln || "";
-  const detailUrl =
-    item.pblancUrl || item.detailPageUrl || "https://www.bizinfo.go.kr";
+  let detailUrl = item.rceptEngnHmpgUrl;
+
+  if (!detailUrl) {
+    if (item.pblancUrl) {
+      detailUrl = item.pblancUrl.startsWith("http")
+        ? item.pblancUrl
+        : `https://www.bizinfo.go.kr${item.pblancUrl}`;
+    } else if (item.detailPageUrl) {
+      detailUrl = item.detailPageUrl;
+    } else {
+      detailUrl = "https://www.bizinfo.go.kr";
+    }
+  }
 
   // 신청기간 파싱
   let startDate = "";
