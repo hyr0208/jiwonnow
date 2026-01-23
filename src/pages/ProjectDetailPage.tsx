@@ -80,6 +80,30 @@ export default function ProjectDetailPage() {
     }
   };
 
+  const handleShare = async () => {
+    const shareData = {
+      title: project?.title || "지원나우 - 정부지원사업",
+      text: `${project?.title} - ${project?.organization}`,
+      url: window.location.href,
+    };
+
+    try {
+      // Web Share API 지원 시 네이티브 공유
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        // 미지원 시 클립보드에 URL 복사
+        await navigator.clipboard.writeText(window.location.href);
+        alert("링크가 클립보드에 복사되었습니다!");
+      }
+    } catch (error) {
+      // 사용자가 공유 취소한 경우 무시
+      if ((error as Error).name !== "AbortError") {
+        console.error("공유 실패:", error);
+      }
+    }
+  };
+
   // 로딩 상태
   if (isLoading) {
     return (
@@ -178,7 +202,7 @@ export default function ProjectDetailPage() {
               </span>
             </div>
 
-            <h1 className="text-3xl md:text-4xl font-black text-gray-900 mb-6 leading-tight bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+            <h1 className="text-2xl md:text-3xl font-bold md:font-black text-gray-900 mb-6 leading-tight bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
               {project.title}
             </h1>
 
@@ -313,7 +337,10 @@ export default function ProjectDetailPage() {
                 )}
                 {isBookmarked ? "저장됨" : "저장"}
               </button>
-              <button className="sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-5 rounded-2xl border-2 border-gray-200 bg-white text-gray-700 font-bold hover:bg-gray-50 hover:border-gray-300 transition-all duration-300 shadow-sm hover:shadow-md">
+              <button
+                onClick={handleShare}
+                className="sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-5 rounded-2xl border-2 border-gray-200 bg-white text-gray-700 font-bold hover:bg-gray-50 hover:border-gray-300 transition-all duration-300 shadow-sm hover:shadow-md"
+              >
                 <Share2 className="w-5 h-5" />
                 공유
               </button>

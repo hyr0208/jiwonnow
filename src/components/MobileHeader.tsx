@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Bookmark, Menu, X, LogIn, LogOut } from "lucide-react";
+import { Home, Bookmark, Menu, X, LogIn, LogOut, User } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 
@@ -12,7 +12,7 @@ export default function MobileHeader() {
     { path: "/", label: "홈", icon: Home },
     // { path: "/projects", label: "공고", icon: FileText }, // 공고 페이지 제거됨
     { path: "/bookmarks", label: "즐겨찾기", icon: Bookmark },
-    // { path: "/profile", label: "내 프로필", icon: User }, // 프로필 페이지 아직 없음
+    { path: "/profile", label: "내 프로필", icon: User },
   ];
 
   const handleLogin = async () => {

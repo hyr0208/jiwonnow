@@ -1,4 +1,5 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Loader2, AlertCircle, FileText } from "lucide-react";
 import { useProjects } from "../hooks/useProjects";
 import { type FilterOptions } from "../types";
@@ -9,13 +10,23 @@ import Pagination from "../components/Pagination";
 const ITEMS_PER_PAGE = 10;
 
 export default function HomePage() {
+  const [searchParams] = useSearchParams();
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState<FilterOptions>({
     keyword: "",
     region: "전체",
     status: "all",
-    supportType: "전체",
+    supportType: searchParams.get("category") || "전체",
   });
+
+  // URL 파라미터 변경 감지하여 필터 업데이트
+  useEffect(() => {
+    const category = searchParams.get("category");
+    setFilters((prev) => ({
+      ...prev,
+      supportType: category || "전체",
+    }));
+  }, [searchParams]);
 
   // API에서 데이터 가져오기
   const { data: projects, isLoading, error } = useProjects({ pageSize: 100 });
