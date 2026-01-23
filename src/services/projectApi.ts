@@ -1,7 +1,7 @@
 import { bizinfoApi } from "./api";
 import type { Project } from "../types";
 
-const API_KEY = import.meta.env.VITE_API_KEY;
+const API_KEY = "e29X5F";
 
 // 기업마당 API 응답 타입 (실제 응답 구조에 맞게 수정)
 interface BizinfoItem {
