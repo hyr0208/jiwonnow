@@ -47,9 +47,11 @@ export default function MobileHeader() {
       <header className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200">
         <div className="flex items-center justify-between h-14 px-4">
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center">
-              <span className="text-white font-bold text-sm">지</span>
-            </div>
+            <img
+              src="/logo.png"
+              alt="지원나우 로고"
+              className="w-8 h-8 rounded-lg shadow-md"
+            />
             <span className="text-lg font-bold text-gray-900">지원나우</span>
           </Link>
           <button

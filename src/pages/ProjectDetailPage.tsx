@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
+import LoginRequestModal from "../components/LoginRequestModal";
 import { useProjects } from "../hooks/useProjects"; // useProjects 훅 사용
 import { useAuth } from "../contexts/AuthContext";
 import { toggleBookmark, checkIsBookmarked } from "../services/bookmarkService";
@@ -34,6 +35,16 @@ export default function ProjectDetailPage() {
 
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isBookmarkLoading, setIsBookmarkLoading] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+
+  const handleLoginConfirm = async () => {
+    try {
+      await login();
+      setIsLoginModalOpen(false);
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   // 즐겨찾기 상태 확인
   useEffect(() => {
@@ -50,14 +61,8 @@ export default function ProjectDetailPage() {
 
   const handleBookmark = async () => {
     if (!user) {
-      // 로그인 안 되어 있으면 로그인 유도
-      if (confirm("로그인이 필요한 서비스입니다. 로그인 하시겠습니까?")) {
-        try {
-          await login();
-        } catch (e) {
-          console.error(e);
-        }
-      }
+      // 로그인 안 되어 있으면 커스텀 모달 띄우기
+      setIsLoginModalOpen(true);
       return;
     }
 
@@ -147,6 +152,11 @@ export default function ProjectDetailPage() {
 
   return (
     <div className="min-h-screen py-8 px-6 lg:px-12 bg-white">
+      <LoginRequestModal
+        isOpen={isLoginModalOpen}
+        onClose={() => setIsLoginModalOpen(false)}
+        onConfirm={handleLoginConfirm}
+      />
       <div className="max-w-4xl mx-auto">
         {/* Back Button */}
         <button
