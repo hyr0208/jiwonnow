@@ -4,6 +4,8 @@ export const mockProjects: Project[] = [
   {
     id: "1",
     title: "2026년 소상공인 디지털 전환 지원사업",
+    description:
+      "소상공인의 디지털 경쟁력 강화를 위한 시스템 구축 및 교육 지원 사업",
     organization: "중소벤처기업부",
     supportType: "자금지원",
     applicationStartDate: "2026-01-15",
@@ -22,6 +24,7 @@ export const mockProjects: Project[] = [
   {
     id: "2",
     title: "청년창업사관학교 15기 모집",
+    description: "청년 창업자를 위한 사업화 역량 강화 프로그램",
     organization: "중소벤처기업부",
     supportType: "창업지원",
     applicationStartDate: "2026-02-01",
@@ -39,6 +42,7 @@ export const mockProjects: Project[] = [
   {
     id: "3",
     title: "서울시 소공인 특화지원사업",
+    description: "서울시 소공인의 경쟁력 강화를 위한 장비 및 기술개발 지원",
     organization: "서울특별시",
     supportType: "기술지원",
     applicationStartDate: "2026-01-02",
@@ -56,6 +60,7 @@ export const mockProjects: Project[] = [
   {
     id: "4",
     title: "2026년 수출바우처 사업",
+    description: "중소기업의 해외시장 진출을 위한 맞춤형 수출 서비스 지원",
     organization: "중소벤처기업부",
     supportType: "수출지원",
     applicationStartDate: "2026-01-20",
@@ -74,6 +79,7 @@ export const mockProjects: Project[] = [
   {
     id: "5",
     title: "경기도 스마트공장 구축 지원",
+    description: "경기도 제조업체의 스마트 제조 혁신을 위한 시스템 구축 지원",
     organization: "경기도",
     supportType: "기술지원",
     applicationStartDate: "2026-02-10",
@@ -92,6 +98,7 @@ export const mockProjects: Project[] = [
   {
     id: "6",
     title: "여성기업 성장지원 프로그램",
+    description: "여성 대표 기업의 성장을 위한 경영 컨설팅 및 네트워킹 지원",
     organization: "여성기업종합지원센터",
     supportType: "경영지원",
     applicationStartDate: "2026-01-22",
@@ -109,6 +116,7 @@ export const mockProjects: Project[] = [
   {
     id: "7",
     title: "부산시 창업도약패키지",
+    description: "부산시 3~7년차 창업기업의 도약을 위한 종합 성장 지원",
     organization: "부산광역시",
     supportType: "창업지원",
     applicationStartDate: "2026-03-01",
@@ -126,6 +134,7 @@ export const mockProjects: Project[] = [
   {
     id: "8",
     title: "고용유지지원금 (일반산업)",
+    description: "경영난을 겪는 사업주의 고용 유지를 위한 휴업수당 지원",
     organization: "고용노동부",
     supportType: "인력지원",
     applicationStartDate: "2026-01-01",

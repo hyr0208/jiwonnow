@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { type Project } from "../types";
 import { Calendar, Building2, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -5,57 +6,16 @@ import { Link } from "react-router-dom";
 interface ProjectCardProps {
   project: Project;
 }
-
 export default function ProjectCard({ project }: ProjectCardProps) {
-  const getStatusBadge = (status: Project["status"]) => {
-    switch (status) {
-      case "open":
-        return (
-          <span className="px-2 py-0.5 rounded text-xs font-semibold bg-green-100 text-green-700">
-            접수중
-          </span>
-        );
-      case "upcoming":
-        return (
-          <span className="px-2 py-0.5 rounded text-xs font-semibold bg-blue-100 text-blue-700">
-            접수예정
-          </span>
-        );
-      case "closed":
-        return (
-          <span className="px-2 py-0.5 rounded text-xs font-semibold bg-gray-100 text-gray-500">
-            마감
-          </span>
-        );
-    }
-  };
-
-  const getSupportTypeBadge = (type: string) => {
-    const colors: Record<string, string> = {
-      자금지원: "bg-blue-500",
-      기술지원: "bg-purple-500",
-      인력지원: "bg-orange-500",
-      수출지원: "bg-green-500",
-      창업지원: "bg-pink-500",
-    };
-    const bgColor = colors[type] || "bg-gray-500";
-
-    return (
-      <span
-        className={`px-2 py-0.5 rounded text-xs font-semibold text-white ${bgColor}`}
-      >
-        {type}
-      </span>
-    );
-  };
-
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("ko-KR", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
+    if (!dateString) return "미정";
+
+    // dayjs로 파싱 시도 (다양한 형식 자동 처리)
+    const date = dayjs(dateString);
+
+    if (!date.isValid()) return dateString;
+
+    return date.format("YYYY년 M월 D일");
   };
 
   const getStatusTypeLabel = () => {
@@ -90,10 +50,10 @@ export default function ProjectCard({ project }: ProjectCardProps) {
 
         {/* Tags */}
         <div className="flex flex-wrap gap-2 mb-4">
-          {project.tags.map((tag) => (
+          {(project.tags || []).slice(0, 3).map((tag) => (
             <span
               key={tag}
-              className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium text-gray-600"
+              className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600"
             >
               #{tag}
             </span>
@@ -101,7 +61,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
         </div>
 
         {/* Date & Link */}
-        <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+        <div className="flex flex-col gap-3 pt-4 border-t border-gray-100">
           <div className="flex items-center gap-2 text-sm text-gray-500">
             <Calendar className="w-4 h-4 text-gray-400" />
             <span>
@@ -111,7 +71,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
           </div>
           <Link
             to={`/projects/${project.id}`}
-            className="inline-flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-semibold text-blue-600 hover:bg-blue-50 transition-colors"
+            className="self-end inline-flex items-center gap-1 px-4 py-2.5 rounded-lg text-sm font-semibold text-blue-600 hover:bg-blue-50 transition-colors"
           >
             상세보기
             <ArrowRight className="w-4 h-4" />
